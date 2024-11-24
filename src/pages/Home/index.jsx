@@ -2,10 +2,12 @@
 
 
 import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 
-import { Title, TopBackground, Form, Input, Container, ContainerInputs, InputLabel } from './styles'
-import UsersImage from '../../assets/users.png'
+import { Title, Form, Input, Container, ContainerInputs, InputLabel } from './styles'
+
+import TopBackground from '../../components/TopBackground'
 import Button from '../../components/Button'
 
 function Home() {
@@ -13,24 +15,28 @@ function Home() {
   const inputAge = useRef()
   const inputEmail = useRef()
 
-async function registerNewUSer() {
-  
-await api.post('/usuarios', {
-    email: inputEmail.current.value,
-    name: inputName.current.value,
-    age: parseInt(inputAge.current.value) 
-  })
-  
-  
-}
+  const navigate = useNavigate()
+
+  async function registerNewUSer() {
+    try {
+      await api.post('/usuarios', {
+        email: inputEmail.current.value,
+        name: inputName.current.value,
+        age: parseInt(inputAge.current.value)
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    navigate('/listagem-usuarios')
+  }
 
 
   return (
 
     <Container>
-      <TopBackground>
-        <img src={UsersImage} alt="" />
-      </TopBackground>
+
+      <TopBackground />
 
       <Form>
         <Title>Cadastrar Usuário</Title>
@@ -48,7 +54,7 @@ await api.post('/usuarios', {
             <InputLabel>
               Idade <span>*</span>
             </InputLabel>
-            <Input type='number' placeholder='Idade' ref={inputAge}/>
+            <Input type='number' placeholder='Idade' ref={inputAge} />
           </div>
 
 
@@ -62,8 +68,11 @@ await api.post('/usuarios', {
         </div>
 
 
-        <Button type='button' onClick={registerNewUSer}>Cadastrar Usuário</Button>
+        <Button type='button' onClick={registerNewUSer} theme= 'primary'>Cadastrar Usuário</Button>
+        
       </Form>
+
+      <Button type='button' onClick={() => navigate('/listagem-usuarios')}>Ver Listagem</Button>
     </Container>
 
   )
